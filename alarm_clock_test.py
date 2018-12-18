@@ -7,7 +7,8 @@ from PyQt5 import (
 
 from PyQt5.QtCore import (
     QTimer, 
-    QTime
+    QTime,
+    QUrl
 )
 
 from PyQt5.QtWidgets import (
@@ -20,6 +21,11 @@ from PyQt5.QtWidgets import (
     QHBoxLayout,
     QDialog,
     QListWidgetItem
+)
+
+from PyQt5.QtMultimedia import (
+    QMediaPlayer,
+    QMediaContent
 )
 
 from digital_clock import DigitalClock
@@ -35,6 +41,7 @@ class MyWidget(QMainWindow):
         self.initUI()
 
         self.alarm_clock_list = []
+        self.player = QMediaPlayer()
 
     def initUI(self):
         self.digital_clock = DigitalClock(self.clockWidget)
@@ -65,7 +72,10 @@ class MyWidget(QMainWindow):
         if (dialog_result == QDialog.Accepted):
             widget_item = QListWidgetItem(self.listWidget);
 
-            alarm_clock_item = AlarmClock(dialog.nameLineEdit.text(), dialog.timeEdit.time())
+            alarm_clock_item = AlarmClock(dialog.nameLineEdit.text(), 
+                                            dialog.timeEdit.time(),
+                                            dialog.filePathLineEdit.text())
+            alarm_clock_item.alarm.connect(self.alarm)
             self.alarm_clock_list.append(alarm_clock_item)
 
             alarm_clock_item_widget = AlarmClockItemWidget(alarm_clock_item, widget_item, self)
@@ -84,6 +94,22 @@ class MyWidget(QMainWindow):
         for alarm_clock in self.alarm_clock_list:
             if alarm_clock.is_active:
                 alarm_clock.tick()
+
+    def alarm(self):
+        alarm_clock = self.sender()
+
+        self.play_sound(alarm_clock.alarm_sound)
+
+        QMessageBox.information(self, 'Будильник',
+                                     'Будильник "' + alarm_clock.title + '"', 
+                                     QMessageBox.Ok)
+        alarm_clock.is_alarm = False
+
+    def play_sound(self, sound):
+        if len(sound):
+            media_content = QMediaContent(QUrl.fromLocalFile(sound))
+            self.player.setMedia(media_content);
+            self.player.play()
 
 app = QApplication(sys.argv)
 ex = MyWidget()
