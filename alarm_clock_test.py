@@ -25,7 +25,8 @@ from PyQt5.QtWidgets import (
 
 from PyQt5.QtMultimedia import (
     QMediaPlayer,
-    QMediaContent
+    QMediaContent,
+    QMediaPlaylist
 )
 
 from digital_clock import DigitalClock
@@ -41,7 +42,11 @@ class MyWidget(QMainWindow):
         self.initUI()
 
         self.alarm_clock_list = []
+
         self.player = QMediaPlayer()
+        self.playlist = QMediaPlaylist()
+        self.playlist.setPlaybackMode(QMediaPlaylist.CurrentItemInLoop)
+        self.player.setPlaylist(self.playlist)
 
     def initUI(self):
         self.digital_clock = DigitalClock(self.clockWidget)
@@ -104,12 +109,19 @@ class MyWidget(QMainWindow):
                                      'Будильник "' + alarm_clock.title + '"', 
                                      QMessageBox.Ok)
         alarm_clock.is_alarm = False
+        self.stop_sound()
 
     def play_sound(self, sound):
         if len(sound):
+            self.player.stop()
+            self.playlist.clear()
+
             media_content = QMediaContent(QUrl.fromLocalFile(sound))
-            self.player.setMedia(media_content);
+            self.playlist.addMedia(media_content)
             self.player.play()
+
+    def stop_sound(self):
+        self.player.stop()
 
 app = QApplication(sys.argv)
 ex = MyWidget()
