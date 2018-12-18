@@ -11,7 +11,7 @@ from PyQt5.QtWidgets import (
     QMessageBox
 )
 
-from alarm_clock import AlarmClock
+from alarm_clock_item import AlarmClockItem
 
 class AlarmClockItemWidget(QWidget):
 

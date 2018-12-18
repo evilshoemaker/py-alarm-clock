@@ -31,7 +31,7 @@ from PyQt5.QtMultimedia import (
 from digital_clock import DigitalClock
 from new_alarm_clock_dialog import NewAlarmClockDialog
 from alarm_clock_item_widget import AlarmClockItemWidget
-from alarm_clock import AlarmClock
+from alarm_clock_item import AlarmClockItem
 
 class MyWidget(QMainWindow):
     def __init__(self):
@@ -72,7 +72,7 @@ class MyWidget(QMainWindow):
         if (dialog_result == QDialog.Accepted):
             widget_item = QListWidgetItem(self.listWidget);
 
-            alarm_clock_item = AlarmClock(dialog.nameLineEdit.text(), 
+            alarm_clock_item = AlarmClockItem(dialog.nameLineEdit.text(), 
                                             dialog.timeEdit.time(),
                                             dialog.filePathLineEdit.text())
             alarm_clock_item.alarm.connect(self.alarm)

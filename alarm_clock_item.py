@@ -4,11 +4,11 @@ from PyQt5.QtCore import (
     QTime
 )
 
-class AlarmClock(QObject):
+class AlarmClockItem(QObject):
     alarm = pyqtSignal()
 
     def __init__(self, title, time, alarm_sound, parent=None):
-        super(AlarmClock, self).__init__(parent)
+        super(AlarmClockItem, self).__init__(parent)
 
         self.title = title
         self.time = time
