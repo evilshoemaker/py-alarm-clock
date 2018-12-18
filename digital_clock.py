@@ -1,8 +1,17 @@
-from PyQt5.QtCore import QTime, QTimer
-from PyQt5.QtWidgets import QApplication, QLCDNumber
+from PyQt5.QtCore import (
+    pyqtSignal,
+    QTime, 
+    QTimer
+)
 
+from PyQt5.QtWidgets import (
+    QApplication, 
+    QLCDNumber
+)
 
 class DigitalClock(QLCDNumber):
+    time_tick = pyqtSignal()
+
     def __init__(self, parent=None):
         super(DigitalClock, self).__init__(parent)
 
@@ -24,6 +33,8 @@ class DigitalClock(QLCDNumber):
             text = text[:2] + ' ' + text[3:]
 
         self.display(text)
+        
+        self.time_tick.emit()
 
 
 if __name__ == '__main__':

@@ -19,7 +19,6 @@ from PyQt5.QtWidgets import (
     QTimeEdit, 
     QHBoxLayout,
     QDialog,
-
     QListWidgetItem
 )
 
@@ -32,16 +31,16 @@ class MyWidget(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        uic.loadUi('alarm_clock_form.ui', self)
+        uic.loadUi('ui/alarm_clock_form.ui', self)
         self.initUI()
 
         self.alarm_clock_list = []
 
     def initUI(self):
         self.digital_clock = DigitalClock(self.clockWidget)
+        self.digital_clock.time_tick.connect(self.time_tick)
 
         clock_widget_layout = QHBoxLayout()
-        clock_widget_layout.setSpacing(0)
         clock_widget_layout.addWidget(self.digital_clock)
         self.clockWidget.setLayout(clock_widget_layout)
 
@@ -61,14 +60,12 @@ class MyWidget(QMainWindow):
 
     def add_alarm_clock(self):
         dialog = NewAlarmClockDialog()
-        dialog.setAttribute(QtCore.Qt.WA_DeleteOnClose)
-
         dialog_result = dialog.exec_()
 
         if (dialog_result == QDialog.Accepted):
             widget_item = QListWidgetItem(self.listWidget);
 
-            alarm_clock_item = AlarmClock("", "")
+            alarm_clock_item = AlarmClock(dialog.nameLineEdit.text(), dialog.timeEdit.time())
             self.alarm_clock_list.append(alarm_clock_item)
 
             alarm_clock_item_widget = AlarmClockItemWidget(alarm_clock_item, widget_item, self)
@@ -76,10 +73,17 @@ class MyWidget(QMainWindow):
             
             widget_item.setSizeHint(alarm_clock_item_widget.sizeHint());
             self.listWidget.setItemWidget(widget_item, alarm_clock_item_widget);
+        
+        dialog.deleteLater()
 
     def alarm_clock_remove(self):
         self.listWidget.takeItem(self.listWidget.row(self.sender().list_widget_item))
         self.alarm_clock_list.remove(self.sender().alarm_clock)
+
+    def time_tick(self):
+        for alarm_clock in self.alarm_clock_list:
+            if alarm_clock.is_active:
+                alarm_clock.tick()
 
 app = QApplication(sys.argv)
 ex = MyWidget()

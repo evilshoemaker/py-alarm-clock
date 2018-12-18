@@ -21,25 +21,27 @@ class AlarmClockItemWidget(QWidget):
     def __init__(self, alarm_clock, list_widget_item, parent=None):
         super(AlarmClockItemWidget, self).__init__(parent)
 
-        uic.loadUi('alarm_clock_item_widget.ui', self)
+        uic.loadUi('ui/alarm_clock_item_widget.ui', self)
 
         self.alarm_clock = alarm_clock
         self.alarm_clock.setParent(self)
 
         self.list_widget_item = list_widget_item
 
-        self.activeCheckBox.setChecked(self.alarm_clock.is_active)
-        self.set_title_color_by_active()
-
         self.activeCheckBox.stateChanged.connect(self.change_active)
         self.removeButton.clicked.connect(self.remove)
 
-    def set_title_color_by_active(self):
+        self.update_info_for_gui()
+
+    def update_info_for_gui(self):
+        self.titleLabel.setText(self.alarm_clock.title)
+        self.timeLabel.setText(self.alarm_clock.time.toString('hh:mm'))
+        self.activeCheckBox.setChecked(self.alarm_clock.is_active)
         self.titleLabel.setStyleSheet('QLabel { color : black; }' if self.alarm_clock.is_active else 'QLabel { color : gray; }')
 
     def change_active(self, state):
         self.alarm_clock.is_active = self.activeCheckBox.isChecked()
-        self.set_title_color_by_active()
+        self.update_info_for_gui()
 
     def remove(self):
         reply = QMessageBox.question(self, 'Выход',

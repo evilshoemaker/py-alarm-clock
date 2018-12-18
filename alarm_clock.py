@@ -8,7 +8,7 @@ class AlarmClock(QObject):
 
         self.title = title
         self.time = time
-        self.is_active = False
+        self.is_active = True
 
     def tick(self):
         pass
